@@ -52,7 +52,22 @@ function SpreadSheet({ documentName }: SpreadSheetProps) {
 
 
   function getUserLogin() {
+    /*
+    Assignment 1: Implement login warning:
+    If the user attempts to interact with the spreadsheet without entering a name they
+    should get a pop up message in paragraph element. 
+    */
     return <div>
+      {userName === "" ? (
+        <span style={{color: 'red'}}>
+          <p>Please enter a username in order to modify the spreadsheet!</p>
+        </span>
+      ) : (
+        <span style={{color: 'green'}}>
+          <p>You are logged in as {spreadSheetClient.userName}</p>
+        </span>
+      )}
+
       <input
         type="text"
         placeholder="User name"
@@ -82,7 +97,6 @@ function SpreadSheet({ documentName }: SpreadSheetProps) {
    * the other buttons do require asynchronous processing and so the function is marked async
    */
   async function onCommandButtonClick(text: string): Promise<void> {
-
 
     switch (text) {
       case ButtonNames.edit_toggle:

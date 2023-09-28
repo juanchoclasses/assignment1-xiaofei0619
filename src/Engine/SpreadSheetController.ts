@@ -319,7 +319,11 @@ export class SpreadSheetController {
       return;
     }
 
-    userEditing.formulaBuilder.setFormula([]);
+    // BUG FIX
+    if (!userEditing!.isEditing) {
+      return;
+    }
+    userEditing!.formulaBuilder.setFormula([]);
     let cellBeingEdited = this._contributingUsers.get(user)?.cellLabel;
 
     // this should not empty but just in case throw error

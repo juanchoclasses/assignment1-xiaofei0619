@@ -40,6 +40,7 @@ export class DocumentHolder {
 
         this._documentFolder = path.join(rootPath, documentDirectory);
         this._initializeDocumentDirectory();
+        // load spreadsheets from the local folder called "documents"
         this._loadDocuments();
     }
 
@@ -67,6 +68,7 @@ export class DocumentHolder {
         files.forEach(file => {
             console.log(file)
             const documentPath = path.join(this._documentFolder, file);
+            // read the contents of the file sychronously
             const documentJSON = fs.readFileSync(documentPath, 'utf8');
 
             // create a new controller
@@ -200,7 +202,7 @@ export class DocumentHolder {
         throw new Error('Document not found');
     }
 
-    public clearFormula(docName: string, user: string): string {
+    public  clearFormula(docName: string, user: string): string {
         let document = this._documents.get(docName);
         if (document) {
             document.clearFormula(user);

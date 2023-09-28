@@ -112,7 +112,10 @@ describe("FormulaEvaluator", () => {
           let result = recalc.result;
           let error = recalc.error;
 
-          expect(result).toEqual(3);
+          // Assignment 1: Modify the wrong test cases
+          // expect(result).toEqual(3);
+          // expect(error).toEqual("");
+          expect(result).toEqual(-1);
           expect(error).toEqual("");
         });
       });
@@ -128,7 +131,10 @@ describe("FormulaEvaluator", () => {
           let result = recalc.result;
           let error = recalc.error;
 
-          expect(result).toEqual(3);
+          // Assignment 1: Modify the wrong test cases
+          // expect(result).toEqual(3);
+          // expect(error).toEqual("");
+          expect(result).toEqual(2);
           expect(error).toEqual("");
         });
       });
@@ -173,8 +179,11 @@ describe("FormulaEvaluator", () => {
         let result = recalc.result;
         let error = recalc.error;
 
+        // Assignment 1: Modify the wrong test cases
+        // expect(result).toEqual(0);
+        // expect(error).toEqual(ErrorMessages.missingParentheses);
         expect(result).toEqual(0);
-        expect(error).toEqual(ErrorMessages.missingParentheses);
+        expect(error).toEqual("");
       });
     });
 
@@ -185,7 +194,6 @@ describe("FormulaEvaluator", () => {
 
         let result = recalc.result;
         let error = recalc.error;
-
 
         expect(result).toEqual(8);
         expect(error).toEqual(ErrorMessages.invalidFormula);
@@ -264,6 +272,7 @@ describe("FormulaEvaluator", () => {
       );
     }
     );
+
     describe("when the formula A1 + A1", () => {
 
       it("returns the number", () => {

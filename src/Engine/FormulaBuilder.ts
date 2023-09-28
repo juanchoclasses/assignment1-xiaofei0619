@@ -71,7 +71,7 @@ export class FormulaBuilder {
       lastTokenUpdated = true;
     }
 
-    // if the last token is not a number and the input token is a number then add the token to the formula
+    // if the last token is not a number and the input token is . then add the token to the formula
     if (isNaN(Number(lastToken)) && token === ".") {
       ignoringToken = true;
     }

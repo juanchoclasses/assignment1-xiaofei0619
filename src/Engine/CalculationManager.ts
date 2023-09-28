@@ -37,8 +37,8 @@ export default class CalculationManager {
         // compute the cells in the computation order
         for (let cellLabel of computationOrder) {
             let currentCell = sheetMemory.getCellByLabel(cellLabel);
+            // formula is a list of strings
             let formula = currentCell.getFormula();
-
             calculator.evaluate(formula);
 
             let value = calculator.result
@@ -48,6 +48,9 @@ export default class CalculationManager {
             currentCell.setError(error);
             currentCell.setValue(value);
             sheetMemory.setCellByLabel(cellLabel, currentCell);
+
+            // reset the evaluator attributes
+            calculator.resetStates();
         }
     }
 

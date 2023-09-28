@@ -125,8 +125,11 @@ describe("SpreadSheetController", () => {
       const user2Result = machine.getResultStringForUser("user2");
       expect(user1Formula).toEqual("1 + A2");
       expect(user2Formula).toEqual("1 +");
-      expect(user1Result).toEqual("#ERR");
-      expect(user2Result).toEqual("#ERR");
+      // Assignment 1: based on the evaluator definitions, this is an invalidCell error
+      expect(user1Result).toEqual("#REF!");
+      // expect(user1Result).toEqual("#ERR");
+      expect(user2Result).toEqual("#ERRFormula");
+      //expect(user2Result).toEqual("#ERR");
     });
 
     it("should not add a cell after the offending cell is removed.", () => {
@@ -147,8 +150,11 @@ describe("SpreadSheetController", () => {
       let user2Result = machine.getResultStringForUser("user2");
       expect(user1Formula).toEqual("1 + A2");
       expect(user2Formula).toEqual("1 +");
-      expect(user1Result).toEqual("#ERR");
-      expect(user2Result).toEqual("#ERR");
+      // Assignment 1: based on the evaluator definitions, this is an invalidCell error
+      expect(user1Result).toEqual("#REF!");
+      // expect(user1Result).toEqual("#ERR");
+      expect(user2Result).toEqual("#ERRFormula");
+      // expect(user2Result).toEqual("#ERR");
 
       machine.removeToken("user1");
       machine.addCell("B3", "user1");

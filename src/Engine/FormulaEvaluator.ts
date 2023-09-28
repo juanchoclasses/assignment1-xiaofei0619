@@ -3,7 +3,10 @@ import SheetMemory from "./SheetMemory"
 import { ErrorMessages } from "./GlobalDefinitions";
 
 
-
+/*
+FormulaEvaluator is used to evaluate the formula for the current cell
+it is only called for a cell when all cells it depends on have been evaluated
+*/
 export class FormulaEvaluator {
   // Define a function called update that takes a string parameter and returns a number
   private _errorOccured: boolean = false;
@@ -13,72 +16,172 @@ export class FormulaEvaluator {
   private _sheetMemory: SheetMemory;
   private _result: number = 0;
 
+  private operators = new Set(['+', '-', '*', '/']);
+  private precedence: Record<string, number> = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+  };
+
 
   constructor(memory: SheetMemory) {
     this._sheetMemory = memory;
   }
 
+
   /**
-    * place holder for the evaluator.   I am not sure what the type of the formula is yet 
-    * I do know that there will be a list of tokens so i will return the length of the array
-    * 
-    * I also need to test the error display in the front end so i will set the error message to
-    * the error messages found In GlobalDefinitions.ts
-    * 
-    * according to this formula.
-    * 
-    7 tokens partial: "#ERR",
-    8 tokens divideByZero: "#DIV/0!",
-    9 tokens invalidCell: "#REF!",
-  10 tokens invalidFormula: "#ERR",
-  11 tokens invalidNumber: "#ERR",
-  12 tokens invalidOperator: "#ERR",
-  13 missingParentheses: "#ERR",
-  0 tokens emptyFormula: "#EMPTY!",
-
-                    When i get back from my quest to save the world from the evil thing i will fix.
-                      (if you are in a hurry you can fix it yourself)
-                               Sincerely 
-                               Bilbo
-    * 
-   */
-
-  evaluate(formula: FormulaType) {
-
-
-    // set the this._result to the length of the formula
-
-    this._result = formula.length;
+   * 
+   * It gets called by CalculationManager to reset the FormulaEvaluator attributes
+   * 
+   */  
+  public resetStates(): void {
+    this._errorOccured = false;
     this._errorMessage = "";
+    this._currentFormula = [];
+    this._result = 0;
+  }
 
-    switch (formula.length) {
-      case 0:
-        this._errorMessage = ErrorMessages.emptyFormula;
-        break;
-      case 7:
-        this._errorMessage = ErrorMessages.partial;
-        break;
-      case 8:
-        this._errorMessage = ErrorMessages.divideByZero;
-        break;
-      case 9:
-        this._errorMessage = ErrorMessages.invalidCell;
-        break;
-      case 10:
-        this._errorMessage = ErrorMessages.invalidFormula;
-        break;
-      case 11:
-        this._errorMessage = ErrorMessages.invalidNumber;
-        break;
-      case 12:
+  /**
+   * 
+   * @param formula
+   * It evaluates the list of tokens to a number if the formula is valid
+   * 
+   */                        
+  evaluate(formula: FormulaType) {
+    // Assignment 1: Implement Calculation Engine
+    this._currentFormula = formula;
+
+    let len: number = formula.length;
+    if (len === 0) {
+      this._errorMessage = ErrorMessages.emptyFormula;
+      return;
+    }
+
+    const postfix = this.convertToPostfix(formula);
+    if (!postfix) {
+      this._result = 0;
+      return;
+    }
+    this.evaluatePostfix(postfix);
+  }
+
+  /**
+   * 
+   * @param formula
+   * @returns a list of postfix tokens if the formula is valid
+   * @returns null if the formula is invalid
+   * 
+   */
+  convertToPostfix(formula: FormulaType): string[] | null {
+    const output: string[] = [];
+    const stack: string[] = [];
+
+    for (const token of formula) {
+      if (this.isNumber(token)) {
+        output.push(token);
+      } else if (this.isCellReference(token)) {
+        output.push(token);
+      } else if (token === '(') {
+        stack.push(token);
+      } else if (token === ')') {
+        while (stack.length && stack[stack.length - 1] !== '(') {
+          output.push(stack.pop()!);
+        }
+        if (stack.length === 0 || stack.pop() !== '(') {
+          // Missing Opening Parentheses
+          this._errorMessage = ErrorMessages.missingParentheses;
+          this._errorOccured = true;
+          break;
+        }
+      } else if (this.operators.has(token)) {
+        while (
+          stack.length 
+          && stack[stack.length - 1] !== '('
+          && this.precedence[token] <= this.precedence[stack[stack.length - 1]]  
+        ) {
+          output.push(stack.pop()!);
+        }
+        stack.push(token);
+      } else {
+        // Invalid Number or Operator
         this._errorMessage = ErrorMessages.invalidOperator;
+        this._errorOccured = true;
         break;
-      case 13:
-        this._errorMessage = ErrorMessages.missingParentheses;
+      }
+    }
+
+    while (stack.length) {
+      // Invalid formula 
+      if (stack[stack.length - 1] === '(') {
+        this._errorMessage = ErrorMessages.invalidFormula;
+        this._errorOccured = true;
         break;
-      default:
-        this._errorMessage = "";
+      }
+      output.push(stack.pop()!);
+    }
+    return output;
+  }
+
+  /**
+   * 
+   * @param postfix a list of ordered tokens
+   * It evaluates the postfix tokens to a number if the list of tokens is valid
+   * 
+   */
+  evaluatePostfix(postfix: string[]) {
+    const stack: number[] = [];
+
+    for (const token of postfix) {
+      if (this.isNumber(token)) {
+        stack.push(parseFloat(token));
+      } else if (this.isCellReference(token)) {
+        let prevValue = this.getCellValue(token)[0];
+        let prevError = this.getCellValue(token)[1];
+        if (prevError === "") {
+          stack.push(prevValue);
+        } else {
+          // In the case of a bad reference cell, set invalidCell error
+          this._errorMessage = ErrorMessages.invalidCell;
+          this._errorOccured = true;
+          break;
+        }
+      } else if (this.operators.has(token) && stack.length >= 2) {
+        const b = stack.pop();
+        const a = stack.pop();
+        if (typeof(a) !== 'number' || typeof(b) !== 'number') {
+          this._errorMessage = ErrorMessages.invalidFormula;
+          this._errorOccured = true;
+          break;
+        } else {
+          // Calculate based on the operator type
+          if (token === '+') {
+            stack.push(a + b);
+          } else if (token === '-') {
+            stack.push(a - b);
+          } else if (token === '*') {
+            stack.push(a * b);
+          } else if (token === '/') {
+            if (b === 0) {
+              // Divide by zero
+              this._result = Infinity;
+              this._errorMessage = ErrorMessages.divideByZero;
+              this._errorOccured = true;
+              break;
+            }
+            stack.push(a / b);
+          }
+        }
+      } else if (this.operators.has(token) && stack.length < 2) {
+        // Invalid Formula as ['4', '+']
+        this._errorMessage = ErrorMessages.invalidFormula;
+        this._errorOccured = true;
         break;
+      }
+    }
+    // Must maintain the partial result
+    if (stack.length > 0) {
+      this._result = stack[0];
     }
   }
 

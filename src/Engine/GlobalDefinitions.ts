@@ -3,11 +3,11 @@ export const ErrorMessages = {
   partial: "#ERR",
   divideByZero: "#DIV/0!",
   invalidCell: "#REF!",
-  invalidFormula: "#ERR",
-  invalidNumber: "#ERR",
-  invalidOperator: "#ERR",
-  missingParentheses: "#ERR",
-  emptyFormula: "#EMPTY!", // this is not an error message but we use it to indicate that the cell is empty
+  invalidFormula: "#ERRFormula",
+  invalidNumber: "#ERRNumber",
+  invalidOperator: "#ERROperator",
+  missingParentheses: "#ERRParentheses",
+  emptyFormula: "#EMPTY!", // this is not an error message but used to indicate that the cell is empty
 
 }
 
