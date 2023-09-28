@@ -202,7 +202,7 @@ export class DocumentHolder {
         throw new Error('Document not found');
     }
 
-    public  clearFormula(docName: string, user: string): string {
+    public clearFormula(docName: string, user: string): string {
         let document = this._documents.get(docName);
         if (document) {
             document.clearFormula(user);
