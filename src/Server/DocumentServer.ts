@@ -171,9 +171,15 @@ app.put('/document/cell/view/:name/:cell', (req: express.Request, res: express.R
     res.status(200).send(documentJSON);
 });
 
+// BUG FIX: token '.'
 app.put('/document/addtoken/:name/:token', (req: express.Request, res: express.Response) => {
     const name = req.params.name;
-    const token = req.params.token;
+    let token = req.params.token;
+
+    if (token === 'period') {
+        token = '.';
+    }
+
     // is this name valid?
     const documentNames = documentHolder.getDocumentNames();
     if (documentNames.indexOf(name) === -1) {
