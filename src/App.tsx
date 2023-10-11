@@ -5,8 +5,10 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import SpreadSheet from './Components/SpreadSheet';
-function App() {
+import FileSelection from './Components/FileSelection';
 
+
+function App() {
 
   const [documentName, setDocumentName] = useState(getDocumentNameFromWindow());
 
@@ -61,14 +63,19 @@ function App() {
   }
 
   if (documentName === '') {
-    setDocumentName('test');
-    resetURL('test');
+    setDocumentName('home');
+    resetURL('home');
   }
+  
 
   return (
     <div className="App">
       <header className="App-header">
-        <SpreadSheet documentName={documentName} />
+        {(documentName === '' || documentName === 'home') ? (
+          <FileSelection />
+        ) : (
+          <SpreadSheet documentName={documentName} />
+        )}
       </header>
 
     </div>

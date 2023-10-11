@@ -1,0 +1,58 @@
+/* styles.css */
+
+.background {
+    font-family: 'Lucida Sans';
+    
+    margin: 40px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+table.selectTable {
+    width: 100%;
+    max-width: 50%;
+    overflow-y: auto;
+    border-collapse: collapse;
+    margin-top: 0px;
+}
+  
+.selecttd {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+  
+.selectLink {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+}
+  
+.selectinput[type="text"] {
+    width: calc(55% - 20px);
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+  
+.selectbutton {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 7px;
+    transition: background-color 0.3s;
+}
+  
+.selectbutton:hover {
+    background-color: #0056b3;
+}
+  
+.selectp {
+    color: #f4f1f1;
+}
